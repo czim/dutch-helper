@@ -1,0 +1,42 @@
+{
+    "name": "czim/dutch-helper",
+    "description": "Simple Dutch language helper tool",
+    "keywords": [
+        "dutch",
+        "pluralize",
+        "singularize"
+    ],
+    "homepage": "https://github.com/czim/dutch-helper",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Coen Zimmerman",
+            "email": "coen@pixelindustries.com",
+            "homepage": "http://www.pixelindustries.com",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php" : ">=5.4.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit" : "4.*",
+        "scrutinizer/ocular": "~1.1",
+        "orchestra/testbench": "~3.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Czim\\DutchHelper\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Czim\\DutchHelper\\Test\\": "tests"
+        }
+    },
+    "scripts": {
+        "test": "phpunit"
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}
