@@ -16,7 +16,7 @@ class DutchHelper
     const VOWEL                 = '[aeiou]';
     const VOWEL_EXCEPT_I        = '[aeou]';
     const DOUBLE_SAME_VOWEL     = 'aa|ee|oo|uu';
-    const DOUBLE_SAME_CONSONANT = 'bb|dd|ff|kk|ll|mm|nn|pp|rr|ss|tt';
+    const DOUBLE_SAME_CONSONANT = 'bb|dd|ff|gg|kk|ll|mm|nn|pp|rr|ss|tt';
     //const DIPHTHONG         = 'oe|eu|ui|ie|ei|ij';
 
     // V = VOWEL
@@ -27,9 +27,29 @@ class DutchHelper
 
     protected $endings = [
 
+        // special exceptions
+        'ei(eren)?'                => ['ei', 'eieren'],
+        'vlo(oi|oien)?'            => ['vlo', 'vlooien'],
+        'kal(f|veren)'             => ['kalf', 'kalveren'],
+        'media'                    => ['media', 'media'],
+        'cris(is|es)'              => ['crisis', 'crises'],
+        'catalog(us|i)'            => ['catalogus', 'catalogi'],
+        'geni(e|us|i[eë]n)'        => ['genius', 'genieën'],
+        'aanb(od|iedingen)'        => ['aanbod', 'aanbiedingen'],
+        'gel(id|ederen)'           => ['gelid', 'gelederen'],
+        'gedrag(ingen)'            => ['gedrag', 'gedragingen'],
+        'gen(ot|ietingen)'         => ['genot', 'genietingen'],
+        '(adres|bordes|les)(sen)?' => ['\\1', '\\1sen'],
+        '^lof'                        => ['lof', 'lofbetuigingen'],
+        'lof((uiting|betuiging)(en))' => ['lof\\2', 'lof\\2en'],
+
         // common special
-        'ties?'      => ['tie', 'ties'],
-        'ie([eë]n)?' => ['ie', 'ieën'],
+        'ties?'         => ['tie', 'ties'],
+        'ie([eë]n)?'    => ['ie', 'ieën'],
+        'taxi\'?s?'     => ['taxi', 'taxi\'s'],
+        // vrede uitzondering!
+        '^rede(nen)?'   => ['\\1ede', '\\1edenen'],
+        '(C)ende(nen)?' => ['\\1ende', '\\1endenen'],
 
         // english
         '(ea|ai|ia)([dlmr])s?' => ['\\1\\2', '\\1\\2s'],
@@ -50,13 +70,13 @@ class DutchHelper
         // partner -> partners
         '(V)(C{1,3})e([rlm])s?' => [ '\\1\\2e\\3', '\\1\\2e\\3s' ],
 
-        // adres -> adressen
-        '(adres|bordes|les)(sen)?' => ['\\1', '\\1sen'],
-
         // lade -> laden
         // bode -> bodes
         'ade' => ['ade', 'aden'],
         'ode' => ['ode', 'odes'],
+
+        // museum -> musea
+        'se(a|um)' => ['seum', 'sea'],
 
         // boe -> boes
         // koe -> koeien
@@ -65,15 +85,18 @@ class DutchHelper
         '(oe)(ien)?' => ['\\1', '\\1ien'],
         '(oei)(en)?' => ['\\1', '\\1en'],
 
+        // medium -> mediums
+        'iums?' => ['ium', 'iums'],
         // pagina -> pagina's
         'ina(\'s)?' => ['ina', 'ina\'s'],
         // video -> videos
-        '([aeo])s?' => ['\\1', '\\1s'],
+        '([aeo]{2})s?' => ['\\1', '\\1s'],
 
         // exception: paragrafen / parafen / typen
-        'paragra(af|ven)' => ['paragraaf', 'paragrafen'],
-        'para(af|ven)'    => ['paraaf', 'parafen'],
+        'paragra(af|fen)' => ['paragraaf', 'paragrafen'],
+        'para(af|fen)'    => ['paraaf', 'parafen'],
         'auteurs?'        => ['auteur', 'auteurs'],
+        'coureurs?'       => ['coureur', 'coureurs'],
         'typen?'          => ['type', 'typen'],
 
         // hoes -> hoezen
@@ -90,6 +113,12 @@ class DutchHelper
         // kleur -> kleuren
         '(oe|eu|ie|ij|ou)(C)(en)?' => ['\\1\\2', '\\1\\2en'],
 
+        // bedrag -> bedragen
+        'edrag(en)?'  => ['edrag', 'edragen'],
+
+        // dak -> daken
+        // pad -> paden (forget about the toad)
+        '(dal|dak|pad|slot|vat|weg|aardappel)(en)?' => [ '\\1', '\\1en' ],
         // aap -> apen etc, loop -> lopen
         // materiaal -> materialen
         '(DSV)([dgklmnprt])'      => ['\\1\\2', ':SINGLE:\\2en'],
@@ -98,16 +127,13 @@ class DutchHelper
         '^a([gklpr])en'           => ['aa\\1', 'a\\1en'],
         '^o([gr])en'              => ['oo\\1', 'o\\1en'],
 
-
         // graf -> graven
         'gra(f|ven)'  => ['graf', 'graven'],
 
-        // bedrag -> bedragen
-        '(V)([g])(en)?'  => ['\\1\\2', '\\1\\2en'],
         // vis -> vissen
         // kanon -> kanonnen
         // do not include 'en' matches here
-        '(V)([bdfklmprst])(en)?'      => ['\\1\\2', '\\1\\2\\2en'],
+        '(V)([bdfgklmprst])(en)?'      => ['\\1\\2', '\\1\\2\\2en'],
         '(V)([bdfklmnprst])([aoui])n' => ['\\1\\2\\3n', '\\1\\2\\3nnen'],
         '(V)(DSC)en'                  => ['\\1:SINGLE:', '\\1\\2en'],
         // bon -> bonnen
@@ -121,9 +147,17 @@ class DutchHelper
         'ijst(en)?' => [ 'ijst', 'ijsten' ],
 
         // abbreviations and oddities
-        '([bcdfghjklmnpqrtvwxyz]{1,3})s?' => [ '\\1', '\\1s' ],
+        '([bcdfghjklmnpqrtvwxyz]{3})s?' => [ '\\1', '\\1s' ],
+
+        '([aeo])s?' => ['\\1', '\\1s'],
     ];
 
+    /**
+     * Whether debug mode is enabled
+     *
+     * @var bool
+     */
+    protected $debug = false;
 
     /**
      * Pluralizes a string (Dutch-aware)
@@ -133,15 +167,13 @@ class DutchHelper
      */
     public function pluralize($string)
     {
-        $pluralized = $this->findEndingBasedMatch($string);
+        $matches = $this->findEndingBasedMatch($string);
 
-        if ( $pluralized !== false) return $pluralized;
+        if ( $matches !== false) return $matches['plural'];
 
-        if ( ! preg_match('#en$#i', $string)) {
-            return $string . 'en';
-        }
+        if (preg_match('#en$#i', $string)) return $string;
 
-        return $string;
+        return $string . 'en';
     }
 
     /**
@@ -152,15 +184,30 @@ class DutchHelper
      */
     public function singularize($string)
     {
-        $singularized = $this->findEndingBasedMatch($string);
+        $matches = $this->findEndingBasedMatch($string);
 
-        if ( $singularized !== false) return $singularized;
+        if ( $matches !== false) return $matches['singular'];
 
         if (preg_match('#^(.*)en$#i', $string, $matches)) {
             return $matches[1];
         }
 
         return $string;
+    }
+
+    /**
+     * Returns the last word/part of the string
+     *
+     * @param string $string
+     * @return string[]     first part, last part
+     */
+    protected function splitLastWord($string)
+    {
+        if (preg_match('#^([^_- \s])_- \s([^_- \s])$#', $string, $matches)) {
+            return [ $matches[1], $matches[2] ];
+        }
+
+        return [ '', $string ];
     }
 
     /**
@@ -202,7 +249,9 @@ class DutchHelper
                 $ending
             );
 
-            var_dump( '#^(.*)' . $ending . '$#i' );
+            if ($this->debug) {
+                var_dump('#^(.*)' . $ending . '$#i');
+            }
 
             if (preg_match('#^(.*)' . $ending . '$#i', $string, $matches)) {
 
@@ -236,4 +285,14 @@ class DutchHelper
         return false;
     }
 
+
+    /**
+     * Enables debug mode
+     *
+     * @param bool $enable
+     */
+    public function debug($enable = true)
+    {
+        $this->debug = (bool) $enable;
+    }
 }
