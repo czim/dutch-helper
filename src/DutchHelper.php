@@ -39,7 +39,8 @@ class DutchHelper
         'gel(id|ederen)'           => ['gelid', 'gelederen'],
         'gedrag(ingen)'            => ['gedrag', 'gedragingen'],
         'gen(ot|ietingen)'         => ['genot', 'genietingen'],
-        '(adres|bordes|les)(sen)?' => ['\\1', '\\1sen'],
+        '(adres|bordes)(sen)?'     => ['\\1', '\\1sen'],
+        '^(les)(sen)?'             => ['\\1', '\\1sen'],
         '^lof'                        => ['lof', 'lofbetuigingen'],
         'lof((uiting|betuiging)(en))' => ['lof\\2', 'lof\\2en'],
 
@@ -53,6 +54,7 @@ class DutchHelper
 
         // english
         '(ea|ai|ia)([dlmr])s?' => ['\\1\\2', '\\1\\2s'],
+        'ngles?'   => [ 'ngle', 'ngles' ],
         'ayout(s)?' => ['ayout', 'ayouts'],
         '(V)ys?'    => ['\\1y', '\\1ys'],
         'ss(es)?'   => ['ss', 'sses'],
@@ -153,6 +155,12 @@ class DutchHelper
     ];
 
     /**
+     * Whether the string was detected to be camelCased
+     * @var bool
+     */
+    protected $camelCased = false;
+
+    /**
      * Whether debug mode is enabled
      *
      * @var bool
@@ -167,6 +175,8 @@ class DutchHelper
      */
     public function pluralize($string)
     {
+        $this->camelCased = $this->isStringCamelCased($string);
+
         $matches = $this->findEndingBasedMatch($string);
 
         if ( $matches !== false) return $matches['plural'];
@@ -184,6 +194,8 @@ class DutchHelper
      */
     public function singularize($string)
     {
+        $this->camelCased = $this->isStringCamelCased($string);
+
         $matches = $this->findEndingBasedMatch($string);
 
         if ( $matches !== false) return $matches['singular'];
@@ -199,15 +211,21 @@ class DutchHelper
      * Returns the last word/part of the string
      *
      * @param string $string
-     * @return string[]     first part, last part
+     * @return string[]     first part, separator, last part
      */
     protected function splitLastWord($string)
     {
-        if (preg_match('#^([^_- \s])_- \s([^_- \s])$#', $string, $matches)) {
-            return [ $matches[1], $matches[2] ];
+        // see if we're dealing with a camelCase string
+        if ($this->camelCased && preg_match('#^(.*)([A-Z].*)$#', $string, $matches)) {
+            return [ $matches[1], '', $matches[2] ];
         }
 
-        return [ '', $string ];
+        // otherwise, attempt to split at anything that might indicate a word separator
+        if (preg_match('#^(.*)([_ \s-])([^_ \s-]+)$#', $string, $matches)) {
+            return [ $matches[1], $matches[2], $matches[3] ];
+        }
+
+        return [ '', '', $string ];
     }
 
     /**
@@ -219,6 +237,8 @@ class DutchHelper
      */
     protected function findEndingBasedMatch($string)
     {
+        list($firstPart, $separator, $lastPart) = $this->splitLastWord($string);
+
         foreach ($this->endings as $ending => $forms) {
 
             // keep track of some special cases, so we
@@ -253,11 +273,19 @@ class DutchHelper
                 var_dump('#^(.*)' . $ending . '$#i');
             }
 
-            if (preg_match('#^(.*)' . $ending . '$#i', $string, $matches)) {
+            if (preg_match('#^(.*)' . $ending . '$#i', $lastPart, $matches)) {
+
+                $newSingularEnd  = preg_replace('#' . $ending . '$#i', $forms[0], $lastPart);
+                $newPluralizeEnd = preg_replace('#' . $ending . '$#i', $forms[1], $lastPart);
+
+                if ($this->camelCased && strlen($firstPart)) {
+                    $newSingularEnd  = ucfirst($newSingularEnd);
+                    $newPluralizeEnd = ucfirst($newPluralizeEnd);
+                }
 
                 $fixedForms = [
-                    'singular' => preg_replace('#' . $ending . '$#i', $forms[0], $string),
-                    'plural'   => preg_replace('#' . $ending . '$#i', $forms[1], $string),
+                    'singular' => $firstPart . $separator . $newSingularEnd,
+                    'plural'   => $firstPart . $separator . $newPluralizeEnd,
                 ];
 
                 // handle exceptions
@@ -285,6 +313,10 @@ class DutchHelper
         return false;
     }
 
+    protected function isStringCamelCased($string)
+    {
+        return (bool) preg_match('#^([a-z0-9]+[A-Z])*[a-z0-9]+$#', $string);
+    }
 
     /**
      * Enables debug mode

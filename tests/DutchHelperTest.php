@@ -38,6 +38,7 @@ class DutchHelperTest extends TestCase
             [ 'pdf', 'pdfs' ],
             [ 'raad', 'raden' ],
             [ 'stank', 'stanken' ],
+            [ 'single', 'singles' ],
             // exceptions
             [ 'ei', 'eieren' ],
             [ 'kalf', 'kalveren' ],
@@ -80,6 +81,37 @@ class DutchHelperTest extends TestCase
             [ 'kaartSpel', 'kaartSpellen' ],
             [ 'kippen ei', 'kippen eieren' ],
             [ 'kippen-oog', 'kippen-ogen' ],
+        ];
+
+        foreach ($words as $forms) {
+
+            foreach ($forms as $word) {
+
+                $this->assertEquals(
+                    $forms[0],
+                    $this->dutch->singularize($word),
+                    "Singular form for '$word' is incorrect."
+                );
+
+                $this->assertEquals(
+                    $forms[1],
+                    $this->dutch->pluralize($word),
+                    "Plural form for '$word' is incorrect."
+                );
+            }
+        }
+    }
+
+    /**
+     * @test
+     */
+    function it_pluralizes_and_singularizes_last_words_in_camelcased_strings()
+    {
+        $words = [
+            [ 'korteFles', 'korteFlessen' ],
+            [ 'zeerLangeFiets', 'zeerLangeFietsen' ],
+            [ 'notCamelCased_fiets', 'notCamelCased_fietsen' ],
+            [ 'CBP', 'CBPs' ],
         ];
 
         foreach ($words as $forms) {
