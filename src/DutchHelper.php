@@ -33,6 +33,7 @@ class DutchHelper
         'kal(f|veren)'             => ['kalf', 'kalveren'],
         'media'                    => ['media', 'media'],
         'cris(is|es)'              => ['crisis', 'crises'],
+        'tikel(s|en)?'             => ['tikel', 'tikelen'],
         'catalog(us|i)'            => ['catalogus', 'catalogi'],
         'geni(e|us|i[eë]n)'        => ['genius', 'genieën'],
         'aanb(od|iedingen)'        => ['aanbod', 'aanbiedingen'],
@@ -45,6 +46,7 @@ class DutchHelper
         'lof((uiting|betuiging)(en))' => ['lof\\2', 'lof\\2en'],
 
         // common special
+        '(\d)s?'        => [ '\\1', '\\1s' ],
         'ties?'         => ['tie', 'ties'],
         'ie([eë]n)?'    => ['ie', 'ieën'],
         'taxi\'?s?'     => ['taxi', 'taxi\'s'],
@@ -53,8 +55,9 @@ class DutchHelper
         '(C)ende(nen)?' => ['\\1ende', '\\1endenen'],
 
         // english
+        '(url|set|uence|che|age)s?' => [ '\\1', '\\1s' ],
         '(ea|ai|ia)([dlmr])s?' => ['\\1\\2', '\\1\\2s'],
-        'ngles?'   => [ 'ngle', 'ngles' ],
+        'ngles?'    => [ 'ngle', 'ngles' ],
         'ayout(s)?' => ['ayout', 'ayouts'],
         '(V)ys?'    => ['\\1y', '\\1ys'],
         'ss(es)?'   => ['ss', 'sses'],
