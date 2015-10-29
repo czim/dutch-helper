@@ -55,6 +55,7 @@ class DutchHelper
         '(C)ende(nen)?' => ['\\1ende', '\\1endenen'],
 
         // english
+        '(rch)(es)?' => [ '\\1', '\\1es' ],
         '(url|set|uence|che|age)s?' => [ '\\1', '\\1s' ],
         '(ea|ai|ia)([dlmr])s?' => ['\\1\\2', '\\1\\2s'],
         'ngles?'    => [ 'ngle', 'ngles' ],
