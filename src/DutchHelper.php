@@ -104,6 +104,7 @@ class DutchHelper
         'auteurs?'        => ['auteur', 'auteurs'],
         'coureurs?'       => ['coureur', 'coureurs'],
         'typen?'          => ['type', 'typen'],
+        'stuks?'          => ['stuk','stuks'],
 
         // hoes -> hoezen
         // graaf -> graven
