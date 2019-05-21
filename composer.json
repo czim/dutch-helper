@@ -1,12 +1,12 @@
 {
-    "name": "czim/dutch-helper",
+    "name": "maxdaniel98/dutch-helper",
     "description": "Simple Dutch language helper tool",
     "keywords": [
         "dutch",
         "pluralize",
         "singularize"
     ],
-    "homepage": "https://github.com/czim/dutch-helper",
+    "homepage": "https://github.com/maxdaniel98/dutch-helper",
     "license": "MIT",
     "authors": [
         {
